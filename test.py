@@ -2,8 +2,11 @@ import torch
 import cv2
 import numpy as np
 from dataset.data import letterbox
+from postprocess.decode import decode_hand_bundle
 from postprocess.keypoints_decode import decode_keypoints
+from postprocess.boxs_decode import decode_boxs
 from models.qm_yolov8 import QMYoloV8
+
 def main():
     DEVICE = "cuda" if torch.cuda.is_available() else "cpu"
     MODEL_PATH = "weights/best.pt"
@@ -45,10 +48,11 @@ def main():
 
         # --- inference ---
         with torch.no_grad():
-            _, _, pred_kpts = model(img)
+            pred_cls, pred_boxs, pred_kpts = model(img)
 
         # --- decode ---
         kpts = decode_keypoints(pred_kpts, 32, CONF_THRESH, IMG_SIZE, scale, pad[0], pad[1], w0, h0)
+        boxs = decode_boxs(pred_cls, pred_boxs, stride=32, conf_thresh=CONF_THRESH)
         # --- draw ---
         for k, (x, y, conf) in enumerate(kpts):
             cv2.circle(frame, (x, y), 4, (0, 255, 0), -1)
@@ -61,12 +65,25 @@ def main():
                 (0, 255, 0),
                 1
             )
+        '''
+        result = decode_hand_bundle(pred_cls, pred_boxs, pred_kpts, 32, CONF_THRESH, 16, 4, scale, pad[0], pad[1], w0, h0)
+        # 4. 绘制
+        if result:
+            x1, y1, x2, y2 = result["bbox"]
+            cv2.rectangle(frame, (x1, y1), (x2, y2), (0, 255, 0), 2)
+            for x, y, v in result["kpts"]:
+                if v > 0.5:
+                    cv2.circle(frame, (x, y), 5, (0, 0, 255), -1)
 
+                cv2.imshow("Keypoints Inference", frame)
+
+                if cv2.waitKey(1) & 0xFF == ord('q'):
+                    break
+        '''
         cv2.imshow("Keypoints Inference", frame)
 
         if cv2.waitKey(1) & 0xFF == ord('q'):
             break
-
     cap.release()
     cv2.destroyAllWindows()
 

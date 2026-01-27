@@ -1,9 +1,8 @@
 import torch
 import numpy as np
 
-
-def decode_detections(pred_cls, pred_boxs_64, stride=32, conf_thresh=0.5, img_size=640,
-                      scale=1.0, pad_left=0, pad_top=0, orig_w=None, orig_h=None):
+def decode_boxs(pred_cls, pred_boxs_64, stride=32, conf_thresh=0.5, img_size=640,
+                scale=1.0, pad_left=0, pad_top=0, orig_w=None, orig_h=None):
     """
     pred_cls: [1, num_classes, H, W]  分类头输出 (Logits)
     pred_boxs_64: [1, 64, H, W]       BBox DFL输出

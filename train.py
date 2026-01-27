@@ -5,12 +5,18 @@ import cv2
 import numpy as np
 from tqdm import tqdm
 
+from loss.cls_loss import cls_loss
 from models.qm_yolov8 import QMYoloV8
 from loss.keypoints_loss import keypoints_loss
 from loss.keypoints_loss import evaluate_keypoints
+
 from loss.boxs_loss import boxs_loss
 from loss.boxs_loss import evaluate_boxs
 from loss.boxs_loss import DFL
+
+from loss.cls_loss import cls_loss
+from loss.cls_loss import evaluate_cls
+
 def visualize_batch(batch):
     """
     逐张显示一个 batch 中的样本
@@ -66,7 +72,7 @@ def train_one_epoch(model, dataloader, optimizer, device):
         targets_bbox = batch["boxs"].to(device)  # 确保你的 Dataloader 返回了 bbox 字段
 
         # 1️⃣ forward
-        class_id, boxs, keypoints = model(images)
+        cls, boxs, keypoints = model(images)
 
         # 2️⃣ 计算多任务 Loss
         # 计算关键点 Loss
@@ -75,8 +81,11 @@ def train_one_epoch(model, dataloader, optimizer, device):
         # 计算检测框 Loss
         loss_box = boxs_loss(pred_boxes_64=boxs, gt_boxes=targets_bbox, dfl_layer=dfl_decoder, stride=32)
 
+        # 计算分类ID Loss
+        loss_cls = cls_loss(pred_cls = cls, gt_boxes=targets_bbox)
+
         # 合并 Loss (通常权重比例为 1:1 或根据收敛情况调整)
-        loss = loss_kpt + 2.0 * loss_box
+        loss = (10.0 * loss_kpt + 7.0 * loss_box + 1.0 * loss_cls)
 
         # 3️⃣ backward
         optimizer.zero_grad()
@@ -88,13 +97,13 @@ def train_one_epoch(model, dataloader, optimizer, device):
         # 更新进度条，显示两个 loss 方便观察哪个不收敛
         pbar.set_postfix(
             total=f"{loss.item():.3f}",
+            cls=f"{loss_cls.item():.3f}",
             kpt=f"{loss_kpt.item():.3f}",
             box=f"{loss_box.item():.3f}",
             step=f"{step}"
         )
 
     return total_loss / len(dataloader)
-
 
 def val_one_epoch(model, dataloader, device):
     # 1. 切换到验证模式 (关键！)
@@ -103,6 +112,7 @@ def val_one_epoch(model, dataloader, device):
     total_loss = 0.0
     KPTS_TP = KPTS_FP = KPTS_FN = 0
     BOXS_TP = BOXS_FP = BOXS_FN = 0
+    CLS_TP= CLS_FP = CLS_FN = 0
 
     pbar = tqdm(dataloader, total=len(dataloader), desc="Val", ncols=120)
     dfl_decoder = DFL(reg_max=16).to(device)
@@ -115,7 +125,7 @@ def val_one_epoch(model, dataloader, device):
             boxs_targets = batch["boxs"].to(device)
 
             # 这里的推理必须对应你模型的 output 顺序
-            _, pred_boxs, pred_kpts = model(images)
+            pred_cls, pred_boxs, pred_kpts = model(images)
 
             # --- Keypoints 评估 ---
             loss_kpts = keypoints_loss(pred_kpts, kpts_targets, stride=32)
@@ -126,21 +136,27 @@ def val_one_epoch(model, dataloader, device):
 
             # --- BBox 评估 ---
             loss_boxs = boxs_loss(pred_boxs, boxs_targets, dfl_decoder, stride=32)
-
-            # 重要：这里必须用专门的检测框评估函数，不能用 evaluate_keypoints
-            # 假设你已经写好了 evaluate_boxes 函数
             boxs_tp, boxs_fp, boxs_fn = evaluate_boxs(pred_boxs, boxs_targets, stride=32, iou_thresh=0.5)
             BOXS_TP += boxs_tp
             BOXS_FP += boxs_fp
             BOXS_FN += boxs_fn
 
-            loss = loss_kpts + 2.0 * loss_boxs
+            #计算class_id的分数
+            loss_cls = cls_loss(pred_cls, boxs_targets, stride=32)
+            cls_tp, cls_fp, cls_fn = evaluate_cls(pred_cls, boxs_targets, stride=32, conf_thresh=0.5)
+            BOXS_TP += cls_tp
+            BOXS_FP += cls_fp
+            BOXS_FN += cls_fn
+
+            loss = (10.0 * loss_kpts + 7.0 * loss_boxs + 1.0 * loss_cls)
+
             total_loss += loss.item()
 
             pbar.set_postfix(
                 total=f"{loss.item():.3f}",
-                kpt=f"{loss_kpts.item():.3f}",
-                box=f"{loss_boxs.item():.3f}"
+                cls=f"{loss_cls.item():.3f}",
+                box=f"{loss_boxs.item():.3f}",
+                pkts=f"{loss_kpts.item():.3f}"
             )
 
     # 3. 计算最终指标 (防止除零)
@@ -152,13 +168,18 @@ def val_one_epoch(model, dataloader, device):
         "kpts_recall": safe_div(KPTS_TP, KPTS_TP + KPTS_FN),
         "boxs_precision": safe_div(BOXS_TP, BOXS_TP + BOXS_FP),
         "boxs_recall": safe_div(BOXS_TP, BOXS_TP + BOXS_FN),
+        "cls_precision": safe_div(CLS_TP, CLS_TP + CLS_FP),
+        "cls_recall": safe_div(CLS_TP, CLS_TP + CLS_FN),
         # 直接把这些值放出来，不要包在 details 里
         "KPTS_TP": KPTS_TP,
         "KPTS_FP": KPTS_FP,
         "KPTS_FN": KPTS_FN,
         "BOXS_TP": BOXS_TP,
         "BOXS_FP": BOXS_FP,
-        "BOXS_FN": BOXS_FN
+        "BOXS_FN": BOXS_FN,
+        "CLS_TP": CLS_TP,
+        "CLS_FP": CLS_FP,
+        "CLS_FN": CLS_FN
     }
     return metrics
 
@@ -196,6 +217,8 @@ def main():
                 f"\n" + "=" * 50 +
                 f"\n[Epoch {epoch}] Summary:"
                 f"\nLoss:      Train={avg_train_loss:.4f} | Val={val_stats['loss']:.4f}"
+                f"\nCls: Prec={val_stats['cls_precision']:.4f} | Rec={val_stats['cls_recall']:.4f} "
+                f"(TP={val_stats['CLS_TP']}, FP={val_stats['CLS_FP']}, FN={val_stats['CLS_FN']})"
                 f"\nKeypoints: Prec={val_stats['kpts_precision']:.4f} | Rec={val_stats['kpts_recall']:.4f} "
                 f"(TP={val_stats['KPTS_TP']}, FP={val_stats['KPTS_FP']}, FN={val_stats['KPTS_FN']})"
                 f"\nBBox:      Prec={val_stats['boxs_precision']:.4f} | Rec={val_stats['boxs_recall']:.4f} "

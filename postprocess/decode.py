@@ -1,0 +1,138 @@
+import torch
+import torch.nn.functional as F
+
+def unletterbox(x, y, scale, pad_left, pad_top, orig_w, orig_h):
+    """
+    将 letterbox 后坐标映射回原图坐标（YOLOv8 对齐）
+
+    Args:
+        x, y      : Tensor 或 float，letterbox 后坐标
+        scale     : resize 比例 (new / original)
+        pad_left  : 左侧 padding（像素）
+        pad_top   : 顶部 padding（像素）
+        orig_w    : 原图宽
+        orig_h    : 原图高
+
+    Returns:
+        x, y      : 原图坐标（已 clamp）
+    """
+
+    # 1. 反算 padding + resize
+    x = (x - pad_left) / scale
+    y = (y - pad_top) / scale
+
+    # 2. Clamp 到原图范围
+    if isinstance(x, torch.Tensor):
+        x = x.clamp(0, orig_w - 1)
+        y = y.clamp(0, orig_h - 1)
+    else:
+        x = max(0, min(x, orig_w - 1))
+        y = max(0, min(y, orig_h - 1))
+
+    return x, y
+
+def decode_hand_bundle(pred_cls, pred_boxs_64, pred_kpts,
+                       stride=32, conf_thresh=0.5, reg_max=16, num_kpts=4,
+                       scale=1.0, pad_left=0, pad_top=0, orig_w=None, orig_h=None):
+    """
+    YOLOv8-Pose 风格单目标解码（BBox + Keypoints）
+
+    Args:
+        pred_cls     : [1, 1, H, W]      objectness logits
+        pred_boxs_64 : [1, 64, H, W]     DFL bbox
+        pred_kpts    : [1, K*3, H, W]    keypoints (dx, dy, v)
+    """
+
+    device = pred_cls.device
+    _, _, H, W = pred_cls.shape
+
+    # --------------------------------------------------
+    # 1. 找中心点（objectness 最大）
+    # --------------------------------------------------
+    cls_prob = torch.sigmoid(pred_cls)
+    max_score, max_idx = torch.max(cls_prob.view(-1), dim=0)
+
+    if max_score < conf_thresh:
+        return None
+
+    gj = int(max_idx // W)
+    gi = int(max_idx % W)
+
+    # --------------------------------------------------
+    # 2. BBox 解码（DFL）
+    # --------------------------------------------------
+    project = torch.arange(reg_max, device=device, dtype=torch.float32)
+
+    box_raw = pred_boxs_64.view(1, 4, reg_max, H, W)[0, :, :, gj, gi]
+    box_prob = F.softmax(box_raw, dim=1)
+    ltrb = (box_prob * project.view(1, -1)).sum(dim=1)
+
+    l, t, r, b = ltrb
+
+    cell_cx = (gi + 0.5) * stride
+    cell_cy = (gj + 0.5) * stride
+
+    x1 = cell_cx - l * stride
+    y1 = cell_cy - t * stride
+    x2 = cell_cx + r * stride
+    y2 = cell_cy + b * stride
+
+    # --------------------------------------------------
+    # 3. Keypoints 解码（YOLOv8 标准）
+    # --------------------------------------------------
+    kpt_raw = pred_kpts[0, :, gj, gi].view(num_kpts, 3)
+
+    kpts = []
+    for i in range(num_kpts):
+        dx = torch.sigmoid(kpt_raw[i, 0])
+        dy = torch.sigmoid(kpt_raw[i, 1])
+        v  = torch.sigmoid(kpt_raw[i, 2])
+
+        kx = (gi + dx) * stride
+        ky = (gj + dy) * stride
+        kpts.append([kx, ky, v])
+
+    # --------------------------------------------------
+    # 4. 反算 Letterbox
+    # --------------------------------------------------
+    if orig_w is not None and orig_h is not None:
+        x1, y1 = unletterbox(
+            x1, y1,
+            scale=scale,
+            pad_left=pad_left,
+            pad_top=pad_top,
+            orig_w=orig_w,
+            orig_h=orig_h,
+        )
+        x2, y2 = unletterbox(
+            x2, y2,
+            scale=scale,
+            pad_left=pad_left,
+            pad_top=pad_top,
+            orig_w=orig_w,
+            orig_h=orig_h,
+        )
+
+        final_kpts = []
+        for kx, ky, v in kpts:
+            kx, ky = unletterbox(
+                kx, ky,
+                scale=scale,
+                pad_left=pad_left,
+                pad_top=pad_top,
+                orig_w=orig_w,
+                orig_h=orig_h,
+            )
+            final_kpts.append([int(kx), int(ky), float(v)])
+    else:
+        final_kpts = [[int(kx), int(ky), float(v)] for kx, ky, v in kpts]
+
+    # --------------------------------------------------
+    # 5. 输出
+    # --------------------------------------------------
+    return {
+        "score": float(max_score),
+        "bbox": [int(x1), int(y1), int(x2), int(y2)],
+        "kpts": final_kpts,
+        "center": (gi, gj),
+    }

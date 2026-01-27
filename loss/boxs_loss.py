@@ -49,8 +49,9 @@ def boxs_loss(pred_boxes_64, gt_boxes, dfl_layer, stride=32, img_size=640):
         # ---- feature index ----
         gi = int(cx_img / stride)
         gj = int(cy_img / stride)
-
-        if gi < 0 or gi >= W or gj < 0 or gj >= H:
+        gw = int(bw_img / stride)
+        gh = int(bh_img / stride)
+        if gi < 0 or gi >= W or gj < 0 or gj >= H or gw <= 0 or gh <= 0 or gw >= W or gh >= H:
             continue
 
         fg_mask[b, gj, gi] = True
@@ -73,6 +74,12 @@ def boxs_loss(pred_boxes_64, gt_boxes, dfl_layer, stride=32, img_size=640):
 
         # ---- 转为 feature-space ----
         target_ltrb[b, :, gj, gi] = torch.tensor([l, t, r, b_dist], device=device) / stride
+        for dy in (-1, 0, 1):
+            for dx in (-1, 0, 1):
+                ni, nj = gi + dx, gj + dy
+                if 0 <= ni < W and 0 <= nj < H:
+                    fg_mask[b, nj, ni] = True
+                    target_ltrb[b, :, nj, ni] = target_ltrb[b, :, gj, gi]
 
     # 3. loss
     if fg_mask.any():
@@ -130,6 +137,9 @@ def evaluate_boxs(pred_boxs_64, gt_boxes, stride=32, img_size=640, iou_thresh=0.
     for b in range(B):
         # ---------- GT box (image space) ----------
         cx, cy, w, h = gt_boxes[b]
+        #负样本
+        if cx <= 0 and cy <= 0 and w <= 0 and h <= 0:
+            continue
 
         gt_x1 = (cx - w / 2) * img_size
         gt_y1 = (cy - h / 2) * img_size
