@@ -50,36 +50,20 @@ def main():
         with torch.no_grad():
             pred_cls, pred_boxs, pred_kpts = model(img)
 
-        # --- decode ---
-        kpts = decode_keypoints(pred_kpts, 32, CONF_THRESH, IMG_SIZE, scale, pad[0], pad[1], w0, h0)
-        boxs = decode_boxs(pred_cls, pred_boxs, stride=32, conf_thresh=CONF_THRESH)
-        # --- draw ---
-        for k, (x, y, conf) in enumerate(kpts):
-            cv2.circle(frame, (x, y), 4, (0, 255, 0), -1)
-            cv2.putText(
-                frame,
-                f"K{k}:{conf:.2f}",
-                (x + 4, y - 4),
-                cv2.FONT_HERSHEY_SIMPLEX,
-                0.5,
-                (0, 255, 0),
-                1
-            )
-        '''
         result = decode_hand_bundle(pred_cls, pred_boxs, pred_kpts, 32, CONF_THRESH, 16, 4, scale, pad[0], pad[1], w0, h0)
         # 4. 绘制
         if result:
             x1, y1, x2, y2 = result["bbox"]
             cv2.rectangle(frame, (x1, y1), (x2, y2), (0, 255, 0), 2)
             for x, y, v in result["kpts"]:
-                if v > 0.5:
+                if v > 0.1:
                     cv2.circle(frame, (x, y), 5, (0, 0, 255), -1)
 
                 cv2.imshow("Keypoints Inference", frame)
 
                 if cv2.waitKey(1) & 0xFF == ord('q'):
                     break
-        '''
+
         cv2.imshow("Keypoints Inference", frame)
 
         if cv2.waitKey(1) & 0xFF == ord('q'):

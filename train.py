@@ -1,3 +1,4 @@
+import os
 import torch
 from torch.utils.data import DataLoader
 from dataset.data import HandKeypointsDataset
@@ -76,13 +77,13 @@ def train_one_epoch(model, dataloader, optimizer, device):
 
         # 2️⃣ 计算多任务 Loss
         # 计算关键点 Loss
-        loss_kpt = keypoints_loss(pred_kpts=keypoints, gt_kpts=targets_kpts, stride=32)
+        loss_kpt = keypoints_loss(pred_kpts=keypoints, gt_kpts=targets_kpts, gt_boxes=targets_bbox, stride=32)
 
         # 计算检测框 Loss
         loss_box = boxs_loss(pred_boxes_64=boxs, gt_boxes=targets_bbox, dfl_layer=dfl_decoder, stride=32)
 
         # 计算分类ID Loss
-        loss_cls = cls_loss(pred_cls = cls, gt_boxes=targets_bbox)
+        loss_cls = cls_loss(pred_cls = cls, gt_boxes=targets_bbox, stride=32)
 
         # 合并 Loss (通常权重比例为 1:1 或根据收敛情况调整)
         loss = (10.0 * loss_kpt + 7.0 * loss_box + 1.0 * loss_cls)
@@ -128,15 +129,15 @@ def val_one_epoch(model, dataloader, device):
             pred_cls, pred_boxs, pred_kpts = model(images)
 
             # --- Keypoints 评估 ---
-            loss_kpts = keypoints_loss(pred_kpts, kpts_targets, stride=32)
-            kpts_tp, kpts_fp, kpts_fn = evaluate_keypoints(pred_kpts, kpts_targets, stride=32)
+            loss_kpts = keypoints_loss(pred_kpts, kpts_targets, boxs_targets, stride=32)
+            kpts_tp, kpts_fp, kpts_fn = evaluate_keypoints(pred_cls=pred_cls, pred_kpts=pred_kpts, gt_kpts=kpts_targets, conf_thresh=0.5, dist_thresh=0.05)
             KPTS_TP += kpts_tp
             KPTS_FP += kpts_fp
             KPTS_FN += kpts_fn
 
             # --- BBox 评估 ---
             loss_boxs = boxs_loss(pred_boxs, boxs_targets, dfl_decoder, stride=32)
-            boxs_tp, boxs_fp, boxs_fn = evaluate_boxs(pred_boxs, boxs_targets, stride=32, iou_thresh=0.5)
+            boxs_tp, boxs_fp, boxs_fn = evaluate_boxs(pred_cls=pred_cls, pred_boxs_64=pred_boxs, gt_boxes=boxs_targets, dfl_layer=dfl_decoder, stride=32, img_size = 640, iou_thresh = 0.5, conf_thresh = 0.5)
             BOXS_TP += boxs_tp
             BOXS_FP += boxs_fp
             BOXS_FN += boxs_fn
@@ -144,9 +145,9 @@ def val_one_epoch(model, dataloader, device):
             #计算class_id的分数
             loss_cls = cls_loss(pred_cls, boxs_targets, stride=32)
             cls_tp, cls_fp, cls_fn = evaluate_cls(pred_cls, boxs_targets, stride=32, conf_thresh=0.5)
-            BOXS_TP += cls_tp
-            BOXS_FP += cls_fp
-            BOXS_FN += cls_fn
+            CLS_TP += cls_tp
+            CLS_FP += cls_fp
+            CLS_FN += cls_fn
 
             loss = (10.0 * loss_kpts + 7.0 * loss_boxs + 1.0 * loss_cls)
 
@@ -186,7 +187,8 @@ def val_one_epoch(model, dataloader, device):
 def main():
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
     print("\nthis device:", device)
-    epochs = 50
+    start_epoch = 0
+    end_epochs = 50
     batch_size = 64
 
     train_dataset = HandKeypointsDataset(root="data/hand-keypoints", split="train", img_size=640)
@@ -199,11 +201,28 @@ def main():
     #print(batch["image"].shape)
     #visualize_batch(batch)
 
+    checkpoint_path = "weights/last.pt"  # 你的权重文件路径
     model = QMYoloV8().to(device)
     optimizer = torch.optim.AdamW( model.parameters(), lr=1e-3, weight_decay=1e-4)
     best_val_loss = float("inf")
 
-    for epoch in range(epochs):
+    # 2. 加载权重
+    if os.path.exists(checkpoint_path):
+        print(f"正在加载权重: {checkpoint_path}")
+        checkpoint = torch.load(checkpoint_path, map_location=device)
+
+        # 加载模型参数
+        model.load_state_dict(checkpoint['model_state_dict'])
+
+        # 如果是接着训练（Resume），还需要加载优化器状态和 Epoch
+        if 'optimizer_state_dict' in checkpoint:
+            optimizer.load_state_dict(checkpoint['optimizer_state_dict'])
+            start_epoch = checkpoint['epoch'] + 1
+            print(f"成功恢复训练，将从第 {start_epoch} Epoch 开始")
+    else:
+        print("未找到预训练权重，将从零开始训练")
+
+    for epoch in range(start_epoch, end_epochs):
 
         print(f"\n==== Epoch {epoch} ====")
         model.train()
@@ -231,6 +250,16 @@ def main():
             best_val_loss = val_stats["loss"]
             torch.save(model.state_dict(), "weights/best.pt")
             print(">> saved best model")
+
+    if start_epoch < end_epochs:
+        # 保存当前的进度
+        save_dict = {
+            'epoch': epoch,
+            'model_state_dict': model.state_dict(),
+            'optimizer_state_dict': optimizer.state_dict(),
+            'loss': avg_train_loss,
+        }
+        torch.save(save_dict, checkpoint_path)
 
 if __name__ == "__main__":
     main()

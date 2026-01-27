@@ -31,63 +31,49 @@ def unletterbox(x, y, scale, pad_left, pad_top, orig_w, orig_h):
 
     return x, y
 
-def decode_hand_bundle(pred_cls, pred_boxs_64, pred_kpts,
-                       stride=32, conf_thresh=0.5, reg_max=16, num_kpts=4,
-                       scale=1.0, pad_left=0, pad_top=0, orig_w=None, orig_h=None):
-    """
-    YOLOv8-Pose 风格单目标解码（BBox + Keypoints）
 
-    Args:
-        pred_cls     : [1, 1, H, W]      objectness logits
-        pred_boxs_64 : [1, 64, H, W]     DFL bbox
-        pred_kpts    : [1, K*3, H, W]    keypoints (dx, dy, v)
-    """
-
+def decode_hand_bundle(pred_cls, pred_boxs_64, pred_kpts, stride=32, conf_thresh=0.5, reg_max=16, num_kpts=4, scale=1.0,
+                       pad_left=0, pad_top=0, orig_w=None, orig_h=None):
     device = pred_cls.device
     _, _, H, W = pred_cls.shape
 
-    # --------------------------------------------------
-    # 1. 找中心点（objectness 最大）
-    # --------------------------------------------------
+    # 1. 找中心点
     cls_prob = torch.sigmoid(pred_cls)
     max_score, max_idx = torch.max(cls_prob.view(-1), dim=0)
-
     if max_score < conf_thresh:
         return None
 
     gj = int(max_idx // W)
     gi = int(max_idx % W)
 
-    # --------------------------------------------------
-    # 2. BBox 解码（DFL）
-    # --------------------------------------------------
+    # 2. BBox 解码
     project = torch.arange(reg_max, device=device, dtype=torch.float32)
-
-    box_raw = pred_boxs_64.view(1, 4, reg_max, H, W)[0, :, :, gj, gi]
-    box_prob = F.softmax(box_raw, dim=1)
-    ltrb = (box_prob * project.view(1, -1)).sum(dim=1)
-
+    box_dist = pred_boxs_64[0, :, gj, gi].view(4, reg_max)
+    box_prob = F.softmax(box_dist, dim=1)
+    ltrb = torch.matmul(box_prob, project)
     l, t, r, b = ltrb
 
-    cell_cx = (gi + 0.5) * stride
-    cell_cy = (gj + 0.5) * stride
+    # 【微调点】：这里加上 0.5，确保与 boxs_loss 里的计算基准点完全重合
+    cell_cx, cell_cy = gi + 0.5, gj + 0.5
 
-    x1 = cell_cx - l * stride
-    y1 = cell_cy - t * stride
-    x2 = cell_cx + r * stride
-    y2 = cell_cy + b * stride
+    x1 = (cell_cx - l) * stride
+    y1 = (cell_cy - t) * stride
+    x2 = (cell_cx + r) * stride
+    y2 = (cell_cy + b) * stride
 
-    # --------------------------------------------------
-    # 3. Keypoints 解码（YOLOv8 标准）
-    # --------------------------------------------------
+    # 3. Keypoints 解码 (修正偏移量逻辑)
     kpt_raw = pred_kpts[0, :, gj, gi].view(num_kpts, 3)
-
     kpts = []
     for i in range(num_kpts):
-        dx = torch.sigmoid(kpt_raw[i, 0])
+        # 注意：YOLOv8 官方关键点回归不一定用 sigmoid
+        # 如果你训练时用了 sigmoid，保持现状；
+        # 但通常回归 dx, dy 是线性输出，表示相对于当前网格中心的偏移倍数
+        dx = torch.sigmoid(kpt_raw[i, 0])  # 必须加 sigmoid，因为你 Loss 里用了
         dy = torch.sigmoid(kpt_raw[i, 1])
-        v  = torch.sigmoid(kpt_raw[i, 2])
+        v = torch.sigmoid(kpt_raw[i, 2])
 
+        # 修正公式：kx = (grid_x + dx * 2) * stride (取决于你 Loss 里的写法)
+        # 这里先按常见的“相对坐标”还原：
         kx = (gi + dx) * stride
         ky = (gj + dy) * stride
         kpts.append([kx, ky, v])
