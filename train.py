@@ -251,15 +251,16 @@ def main():
             torch.save(model.state_dict(), "weights/best.pt")
             print(">> saved best model")
 
-    if start_epoch < end_epochs:
-        # 保存当前的进度
-        save_dict = {
-            'epoch': epoch,
-            'model_state_dict': model.state_dict(),
-            'optimizer_state_dict': optimizer.state_dict(),
-            'loss': avg_train_loss,
-        }
-        torch.save(save_dict, checkpoint_path)
+        if start_epoch < end_epochs:
+            # 保存当前的进度
+            save_dict = {
+                'epoch': epoch,
+                'model_state_dict': model.state_dict(),
+                'optimizer_state_dict': optimizer.state_dict(),
+                'loss': avg_train_loss,
+            }
+            torch.save(save_dict, checkpoint_path)
+            print(">> saved last model")
 
 if __name__ == "__main__":
     main()
