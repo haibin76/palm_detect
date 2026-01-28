@@ -130,7 +130,7 @@ def val_one_epoch(model, dataloader, device):
 
             # --- Keypoints 评估 ---
             loss_kpts = keypoints_loss(pred_kpts, kpts_targets, boxs_targets, stride=32)
-            kpts_tp, kpts_fp, kpts_fn = evaluate_keypoints(pred_cls=pred_cls, pred_kpts=pred_kpts, gt_kpts=kpts_targets, conf_thresh=0.5, dist_thresh=0.05)
+            kpts_tp, kpts_fp, kpts_fn = evaluate_keypoints(pred_cls=pred_cls, pred_kpts=pred_kpts, gt_kpts=kpts_targets, gt_boxes=boxs_targets, conf_thresh=0.5, dist_thresh=0.05)
             KPTS_TP += kpts_tp
             KPTS_FP += kpts_fp
             KPTS_FN += kpts_fn

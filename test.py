@@ -59,10 +59,10 @@ def main():
                 if v > 0.1:
                     cv2.circle(frame, (x, y), 5, (0, 0, 255), -1)
 
-                cv2.imshow("Keypoints Inference", frame)
+            cv2.imshow("Keypoints Inference", frame)
 
-                if cv2.waitKey(1) & 0xFF == ord('q'):
-                    break
+            if cv2.waitKey(1) & 0xFF == ord('q'):
+                break
 
         cv2.imshow("Keypoints Inference", frame)
 
