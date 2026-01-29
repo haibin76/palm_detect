@@ -17,7 +17,7 @@ def main():
     model = QMYoloV8().to(DEVICE)
 
     # 2️⃣ 加载权重（注意：不是直接 model = torch.load）
-    state_dict = torch.load("weights/best.pt", map_location=DEVICE)
+    state_dict = torch.load(MODEL_PATH, map_location=DEVICE)
     model.load_state_dict(state_dict)
 
     # 3️⃣ 切换到 eval

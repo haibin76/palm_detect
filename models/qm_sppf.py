@@ -18,8 +18,8 @@ class QMSPPF(nn.Module):
         """
         super().__init__()
         c_ = c1 // 2  # hidden channels
-        self.cv1 = QMConv(c1, c_, 1, 1)
-        self.cv2 = QMConv(c_ * 4, c2, 1, 1)
+        self.cv1 = QMConv(c1, c_, 1, 1, 0)
+        self.cv2 = QMConv(c_ * 4, c2, 1, 1, 0)
         #self.m = nn.MaxPool2d(kernel_size=k, stride=1, padding=k // 2)
         self.conv1 = nn.Conv2d(c_, c_, 3, 1, 1, bias=False)
         self.conv2 = nn.Conv2d(c_, c_, 3, 1, 1, bias=False)
@@ -40,7 +40,7 @@ class QMSPPF(nn.Module):
         #y = [self.cv1(x)]
         #y.extend(self.m(y[-1]) for _ in range(3))
         #return self.cv2(torch.cat(y, 1))
-        h, w = x.shape[-2:]
+        #h, w = x.shape[-2:]
 
         y0 = self.cv1(x)
 

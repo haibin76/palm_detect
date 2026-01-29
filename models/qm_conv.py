@@ -2,7 +2,7 @@ import torch
 import torch.nn as nn
 
 class QMConv(nn.Module):
-    def __init__(self, c1, c2, k=1, s=1, p=None, g=1, d=1, act=True):
+    def __init__(self, c1, c2, k=1, s=1, p=1, g=1, d=1, act=True):
         """Initialize Conv layer with given parameters.
         Args:
             c1 (int): Number of input channels.
@@ -15,7 +15,7 @@ class QMConv(nn.Module):
             act (bool | nn.Module): Activation function.
         """
         super().__init__()
-        self.conv = nn.Conv2d(c1, c2, k, s, k//2, groups=g, dilation=d, bias=False)
+        self.conv = nn.Conv2d(c1, c2, k, s, p, groups=g, dilation=d, bias=False)
         self.bn = nn.BatchNorm2d(c2)
         self.act =  nn.ReLU()
 
