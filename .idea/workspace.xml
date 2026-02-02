@@ -5,27 +5,14 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="e9c39fa5-ccca-47c5-bdef-483ea0aa691b" name="更改" comment="">
-      <change afterPath="$PROJECT_DIR$/.idea/palm_detect.iml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/gen_pb.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/gen_pb/gen_conv.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/test_onnx.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/test_pb.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/.gitignore" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/inspectionProfiles/Project_Default.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/modules.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/modules.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/qm_palm_detect.iml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/vcs.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/vcs.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/models/qm_yolov8.py" beforeDir="false" afterPath="$PROJECT_DIR$/models/qm_yolov8.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/postprocess/decode.py" beforeDir="false" afterPath="$PROJECT_DIR$/postprocess/decode.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/test.py" beforeDir="false" afterPath="$PROJECT_DIR$/test.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/weights/best.onnx" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/weights/best/fingerprint.pb" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/weights/best/saved_model.pb" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/weights/best/variables/variables.data-00000-of-00001" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/weights/best/variables/variables.index" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/weights/frozen_model.pb" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/weights/last.pt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/gen_pb.py" beforeDir="false" afterPath="$PROJECT_DIR$/gen_pb.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/gen_pb/gen_conv.py" beforeDir="false" afterPath="$PROJECT_DIR$/gen_pb/gen_conv.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/models/qm_sppf.py" beforeDir="false" afterPath="$PROJECT_DIR$/models/qm_sppf.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/weights/best.pt" beforeDir="false" afterPath="$PROJECT_DIR$/weights/best.pt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/weights/best_ubuntu.onnx" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/weights/best_ubuntu.pb" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/weights/best_ubuntu.pt" beforeDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -58,6 +45,7 @@
     "Python.test.executor": "Run",
     "Python.test_onnx.executor": "Run",
     "Python.test_pb.executor": "Debug",
+    "Python.train.executor": "Debug",
     "RunOnceActivity.ShowReadmeOnStart": "true",
     "RunOnceActivity.git.unshallow": "true",
     "SHARE_PROJECT_CONFIGURATION_FILES": "true",
@@ -71,29 +59,6 @@
     </key>
   </component>
   <component name="RunManager" selected="Python.gen_pb">
-    <configuration name="freeze_pb" type="PythonConfigurationType" factoryName="Python" nameIsGenerated="true">
-      <module name="palm_detect" />
-      <option name="ENV_FILES" value="" />
-      <option name="INTERPRETER_OPTIONS" value="" />
-      <option name="PARENT_ENVS" value="true" />
-      <envs>
-        <env name="PYTHONUNBUFFERED" value="1" />
-      </envs>
-      <option name="SDK_HOME" value="" />
-      <option name="SDK_NAME" value="pt2pb" />
-      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />
-      <option name="IS_MODULE_SDK" value="false" />
-      <option name="ADD_CONTENT_ROOTS" value="true" />
-      <option name="ADD_SOURCE_ROOTS" value="true" />
-      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/freeze_pb.py" />
-      <option name="PARAMETERS" value="python freeze_pb.py" />
-      <option name="SHOW_COMMAND_LINE" value="false" />
-      <option name="EMULATE_TERMINAL" value="false" />
-      <option name="MODULE_MODE" value="false" />
-      <option name="REDIRECT_INPUT" value="false" />
-      <option name="INPUT_FILE" value="" />
-      <method v="2" />
-    </configuration>
     <configuration name="gen_pb" type="PythonConfigurationType" factoryName="Python" nameIsGenerated="true">
       <module name="palm_detect" />
       <option name="ENV_FILES" value="" />
@@ -185,6 +150,29 @@
       <option name="INPUT_FILE" value="" />
       <method v="2" />
     </configuration>
+    <configuration name="train" type="PythonConfigurationType" factoryName="Python" nameIsGenerated="true">
+      <module name="palm_detect" />
+      <option name="ENV_FILES" value="" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
+      <option name="SDK_HOME" value="" />
+      <option name="SDK_NAME" value="ultralytics-yolo8ns" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />
+      <option name="IS_MODULE_SDK" value="false" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/train.py" />
+      <option name="PARAMETERS" value="python train.py" />
+      <option name="SHOW_COMMAND_LINE" value="false" />
+      <option name="EMULATE_TERMINAL" value="false" />
+      <option name="MODULE_MODE" value="false" />
+      <option name="REDIRECT_INPUT" value="false" />
+      <option name="INPUT_FILE" value="" />
+      <method v="2" />
+    </configuration>
   </component>
   <component name="SharedIndexes">
     <attachedChunks>
@@ -207,9 +195,9 @@
     <breakpoint-manager>
       <breakpoints>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/gen_pb.py</url>
-          <line>78</line>
-          <option name="timeStamp" value="23" />
+          <url>file://$PROJECT_DIR$/gen_pb/gen_conv.py</url>
+          <line>230</line>
+          <option name="timeStamp" value="30" />
         </line-breakpoint>
       </breakpoints>
     </breakpoint-manager>

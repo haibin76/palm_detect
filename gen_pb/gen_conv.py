@@ -53,30 +53,30 @@ def gen_tf_element():
     # qmsppf.cv1 = QMConv(128, 64, 1, 1, 0)
     sppf_cv1 = conv_bn_relu(qmcm10, [1, 1, 128, 64], stride=1, padding='SAME', conv_scope="qmsppf.cv1.conv", bn_scope="qmsppf.cv1.bn")
 
-    # qmsppf.conv1 = nn.Conv2d(64, 64, 3, 1, 1, bias=False)
-    sppf_conv1 = conv(sppf_cv1, [3, 3, 64, 64], stride=1, padding='SAME', conv_scope="qmsppf.conv1")
+    # qmsppf.cv11 = QMConv(64, 64, 3, 1, 1)
+    sppf_cv11 = conv_bn_relu(sppf_cv1, [3, 3, 64, 64], stride=1, padding='SAME', conv_scope="qmsppf.cv11.conv", bn_scope="qmsppf.cv11.bn")
 
-    # qmsppf.conv2 = nn.Conv2d(64, 64, 3, 1, 1, bias=False)
-    sppf_conv2 = conv(sppf_conv1, [3, 3, 64, 64], stride=1, padding='SAME', conv_scope="qmsppf.conv2")
+    # qmsppf.cv12 = QMConv(64, 64, 3, 1, 1)
+    sppf_cv12 = conv_bn_relu(sppf_cv11, [3, 3, 64, 64], stride=1, padding='SAME', conv_scope="qmsppf.cv12.conv", bn_scope="qmsppf.cv12.bn")
 
-    # sppf_conv21 = nn.Conv2d(64, 64, 3, 1, 1, bias=False)
-    sppf_conv21 = conv(sppf_conv2, [3, 3, 64, 64], stride=1, padding='SAME', conv_scope="qmsppf.conv21")
+    # sppf_cv13 = QMConv(64, 64, 3, 1, 1)
+    sppf_cv13 = conv_bn_relu(sppf_cv12, [3, 3, 64, 64], stride=1, padding='SAME', conv_scope="qmsppf.cv13.conv", bn_scope="qmsppf.cv13.bn")
 
-    # sppf.conv3 = nn.Conv2d(64, 64, 3, 1, 1, bias=False)
-    sppf_conv3 = conv(sppf_conv21, [3, 3, 64, 64], stride=1, padding='SAME', conv_scope="qmsppf.conv3")
+    # sppf.cv21 = QMConv(64, 64, 3, 1, 1)
+    sppf_cv21 = conv_bn_relu(sppf_cv13, [3, 3, 64, 64], stride=1, padding='SAME', conv_scope="qmsppf.cv21.conv", bn_scope="qmsppf.cv21.bn")
 
-    # sppf_conv31 = nn.Conv2d(64, 64, 3, 1, 1, bias=False)
-    sppf_conv31 = conv(sppf_conv3, [3, 3, 64, 64], stride=1, padding='SAME', conv_scope="qmsppf.conv31")
+    # sppf_cv22 = QMConv(64, 64, 3, 1, 1)
+    sppf_cv22 = conv_bn_relu(sppf_cv21, [3, 3, 64, 64], stride=1, padding='SAME', conv_scope="qmsppf.cv22.conv", bn_scope="qmsppf.cv22.bn")
 
-    # sppf_conv4 = nn.Conv2d(64, 64, 3, 1, 1, bias=False)
-    sppf_conv4 = conv(sppf_conv31, [3, 3, 64, 64], stride=1, padding='SAME', conv_scope="qmsppf.conv4")
+    # sppf_cv31 = QMConv(64, 64, 3, 1, 1)
+    sppf_cv31 = conv_bn_relu(sppf_cv22, [3, 3, 64, 64], stride=1, padding='SAME', conv_scope="qmsppf.cv31.conv", bn_scope="qmsppf.cv31.bn")
 
-    # sppf_conv41 = nn.Conv2d(64, 64, 3, 1, 1, bias=False)
-    sppf_conv41 = conv(sppf_conv4, [3, 3, 64, 64], stride=1, padding='SAME', conv_scope="qmsppf.conv41")
+    # sppf_cv32 = QMConv(64, 64, 3, 1, 1)
+    sppf_cv32 = conv_bn_relu(sppf_cv31, [3, 3, 64, 64], stride=1, padding='SAME', conv_scope="qmsppf.cv32.conv", bn_scope="qmsppf.cv32.bn")
 
     # y = [y0, y1, y2, y3]
     # return self.cv2(torch.cat(y, 1))
-    sppf_concat = tf.concat([sppf_cv1, sppf_conv21, sppf_conv31, sppf_conv41], axis=-1, name="qmsppf.concat")
+    sppf_concat = tf.concat([sppf_cv1, sppf_cv13, sppf_cv22, sppf_cv32], axis=-1, name="qmsppf.concat")
 
     #sppf_cv2 = QMConv(64*4, 128, 1, 1, 0)
     sppf_cv2 = conv_bn_relu(sppf_concat, [1, 1, 256, 128], stride=1, padding='SAME', conv_scope="qmsppf.cv2.conv", bn_scope="qmsppf.cv2.bn")
@@ -227,6 +227,13 @@ def build_tf_var_dict():
         var_dict[clean_name] = v
     return var_dict
 
+def inspect_pb(pb_path):
+    with tf.io.gfile.GFile(pb_path, "rb") as f:
+        graph_def = tf.compat.v1.GraphDef()
+        graph_def.ParseFromString(f.read())
+
+    for node in graph_def.node:
+        print(node.name)
 
 def gen_pb_file(onnx_file, pb_file):
     # 1. 重置默认图（防止多次运行产生冗余节点）
@@ -234,6 +241,9 @@ def gen_pb_file(onnx_file, pb_file):
 
     # 2. 构建图结构
     input_x, out_cls, out_box, out_kpts = gen_tf_element()
+    print("cls  shape:", out_cls.shape)
+    print("box  shape:", out_box.shape)
+    print("kpts shape:", out_kpts.shape)
 
     # 3. 创建 Session 并配置（防止 GPU 占用报错）
     config = tf.ConfigProto()

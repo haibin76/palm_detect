@@ -70,13 +70,14 @@ def probe_model(pt_path):
 
 # --- 3. 主函数 ---
 def main():
-    pt_file = "weights/best_ubuntu.pt"
-    onnx_file = "weights/best_ubuntu.onnx"
-    pb_file = "weights/best_ubuntu.pb"
+    pt_file = "weights/best.pt"
+    onnx_file = "weights/best.onnx"
+    pb_file = "weights/best.pb"
 
     pt_2_onnx(pt_file, onnx_file)
 
     gen_pb_file(onnx_file, pb_file)
+    inspect_pb(pb_file)
 
 if __name__ == "__main__":
     main()
