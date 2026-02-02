@@ -5,54 +5,7 @@ import torch.nn.functional as F
 from models.qm_conv import QMConv
 from models.qm_sppf import QMSPPF
 from models.qm_pose import QMPose
-
-'''
-  n: [0.33, 0.25, 1024]
-  s: [0.33, 0.50, 1024]
-  m: [0.67, 0.75, 768]
-  l: [1.00, 1.00, 512]
-  x: [1.00, 1.25, 512]
-  
-backbone:
-  # [from, repeats, module, args]
-  - [-1, 1, Conv, [64, 3, 2]] # 0-P1/2
-  - [-1, 1, Conv, [128, 3, 2]] # 1-P2/4
-  - [-1, 1, Conv, [128, 3, 1]] # 1-P2/4 #  - [-1, 3, C2f, [128, True]]
-  - [-1, 1, Conv, [256, 3, 2]] # 3-P3/8
-
-  - [-1, 1, Conv, [256, 3, 1]] # [-1, 6, C2f, [256, True]]
-  - [-1, 1, Conv, [512, 3, 1]]
-
-  - [-1, 1, Conv, [512, 3, 2]] # 5-P4/16
-
-  - [-1, 1, Conv, [512, 3, 1]] # [-1, 6, C2f, [256, True]]↵
-  - [-1, 1, Conv, [512, 3, 1]]
-
-#- [-1, 6, C2f, [512, True]]
-  - [-1, 1, Conv, [512, 3, 2]] # 7-P5/32
-  - [-1, 1, Conv, [512, 3, 1]] #- [-1, 3, C2f, [512, True]]
-  - [-1, 1, SPPF, [512, 2]] # 9
-
-# YOLOv8.0n head
-head:
-#  - [-1, 1, nn.Upsample, [None, 2, "nearest"]]
-#  - [[-1, 6], 1, Concat, [1]] # cat backbone P4
-#  - [-1, 3, C2f, [512]] # 12
-
-#  - [-1, 1, nn.Upsample, [None, 2, "nearest"]]
-#  - [[-1, 4], 1, Concat, [1]] # cat backbone P3
-#  - [-1, 3, C2f, [256]] # 15 (P3/8-small)
-
-#  - [-1, 1, Conv, [256, 3, 2]]
-#  - [[-1, 12], 1, Concat, [1]] # cat head P4
-#  - [-1, 3, C2f, [512]] # 18 (P4/16-medium)
-
-#  - [-1, 1, Conv, [512, 3, 2]]
-#  - [9, 1, Concat, [1]] # cat head P5
-#   - [-1, 3, C2f, [1024]] # 21 (P5/32-large)
-
-- [[10], 1, Pose, [nc, kpt_shape]] # Pose(P3, P4, P5)
-'''
+from gen_pb.backbone_ztv2 import *
 
 class QMYoloV8(nn.Module):
     def __init__(self, k=1, s=1, p=1, g=1, d=1, act=True):
@@ -99,16 +52,27 @@ class QMYoloV8(nn.Module):
 
     def forward(self, x):
         y0 = self.qmcm0(x)
+        #print_layer_info("qmcm0", self.qmcm0, x, y0)
         y1 = self.qmcm1(y0)
+        #print_layer_info("qmcm1", self.qmcm1, y0, y1)
         y2 = self.qmcm2(y1)
+        #print_layer_info("qmcm2", self.qmcm2, y1, y2)
         y3 = self.qmcm3(y2)
+        #print_layer_info("qmcm3", self.qmcm3, y2, y3)
         y4 = self.qmcm4(y3)
+        #print_layer_info("qmcm4", self.qmcm4, y3, y4)
         y5 = self.qmcm5(y4)
+        #print_layer_info("qmcm5", self.qmcm5, y4, y5)
         y6 = self.qmcm6(y5)
+        #print_layer_info("qmcm6", self.qmcm6, y5, y6)
         y7 = self.qmcm7(y6)
+        #print_layer_info("qmcm7", self.qmcm7, y6, y7)
         y8 = self.qmcm8(y7)
+        #print_layer_info("qmcm8", self.qmcm8, y7, y8)
         y9 = self.qmcm9(y8)
+        #print_layer_info("qmcm9", self.qmcm9, y8, y9)
         y10 = self.qmcm10(y9)
+        #print_layer_info("qmcm10", self.qmcm10, y9, y10)
 
         y11 = self.qmsppf(y10)
 

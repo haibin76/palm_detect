@@ -2,7 +2,7 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/.idea/qm_palm_detect.iml" filepath="$PROJECT_DIR$/.idea/qm_palm_detect.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/palm_detect.iml" filepath="$PROJECT_DIR$/.idea/palm_detect.iml" />
     </modules>
   </component>
 </project>

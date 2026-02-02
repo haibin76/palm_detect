@@ -6,10 +6,11 @@ from postprocess.decode import decode_hand_bundle
 from postprocess.keypoints_decode import decode_keypoints
 from postprocess.boxs_decode import decode_boxs
 from models.qm_yolov8 import QMYoloV8
+import onnxruntime as ort
 
 def main():
     DEVICE = "cuda" if torch.cuda.is_available() else "cpu"
-    MODEL_PATH = "weights/best.pt"
+    MODEL_PATH = "weights/best_ubuntu.pt"
     IMG_SIZE = 640
     CONF_THRESH = 0.5
 

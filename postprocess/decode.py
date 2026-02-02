@@ -1,6 +1,8 @@
 import torch
 import torch.nn.functional as F
 
+import numpy as np
+
 def unletterbox(x, y, scale, pad_left, pad_top, orig_w, orig_h):
     """
     将 letterbox 后坐标映射回原图坐标（YOLOv8 对齐）
@@ -85,6 +87,141 @@ def decode_hand_bundle(pred_cls, pred_boxs_64, pred_kpts, stride=32, conf_thresh
 
     # --------------------------------------------------
     # 4. 反算 Letterbox
+    # --------------------------------------------------
+    if orig_w is not None and orig_h is not None:
+        x1, y1 = unletterbox(
+            x1, y1,
+            scale=scale,
+            pad_left=pad_left,
+            pad_top=pad_top,
+            orig_w=orig_w,
+            orig_h=orig_h,
+        )
+        x2, y2 = unletterbox(
+            x2, y2,
+            scale=scale,
+            pad_left=pad_left,
+            pad_top=pad_top,
+            orig_w=orig_w,
+            orig_h=orig_h,
+        )
+
+        final_kpts = []
+        for kx, ky, v in kpts:
+            kx, ky = unletterbox(
+                kx, ky,
+                scale=scale,
+                pad_left=pad_left,
+                pad_top=pad_top,
+                orig_w=orig_w,
+                orig_h=orig_h,
+            )
+            final_kpts.append([int(kx), int(ky), float(v)])
+    else:
+        final_kpts = [[int(kx), int(ky), float(v)] for kx, ky, v in kpts]
+
+    # --------------------------------------------------
+    # 5. 输出
+    # --------------------------------------------------
+    return {
+        "score": float(max_score),
+        "bbox": [int(x1), int(y1), int(x2), int(y2)],
+        "kpts": final_kpts,
+        "center": (gi, gj),
+    }
+
+# --------------------------------------------------
+# 基础算子（对齐 torch）
+# --------------------------------------------------
+def sigmoid(x):
+    return 1.0 / (1.0 + np.exp(-x))
+
+
+def softmax(x, axis=-1):
+    x = x - np.max(x, axis=axis, keepdims=True)
+    e = np.exp(x)
+    return e / np.sum(e, axis=axis, keepdims=True)
+
+
+# --------------------------------------------------
+# numpy 版 decode_hand_bundle
+# --------------------------------------------------
+def decode_hand_bundle_np(
+    pred_cls,
+    pred_boxs_64,
+    pred_kpts,
+    stride=32,
+    conf_thresh=0.5,
+    reg_max=16,
+    num_kpts=4,
+    scale=1.0,
+    pad_left=0,
+    pad_top=0,
+    orig_w=None,
+    orig_h=None,
+):
+    """
+    pred_cls      : np.ndarray [1, H, W, 1]
+    pred_boxs_64  : np.ndarray [1, H, W, 64]
+    pred_kpts     : np.ndarray [1, H, W, num_kpts*3]
+    """
+
+    _, H, W, _ = pred_cls.shape
+
+    # --------------------------------------------------
+    # 1. 找中心点（完全对齐 torch）
+    # --------------------------------------------------
+    cls_prob = sigmoid(pred_cls)
+    flat = cls_prob.reshape(-1)
+
+    max_idx = np.argmax(flat)
+    max_score = flat[max_idx]
+
+    if max_score < conf_thresh:
+        return None
+
+    gj = max_idx // W
+    gi = max_idx % W
+
+    # --------------------------------------------------
+    # 2. BBox 解码（DFL，完全一致）
+    # --------------------------------------------------
+    project = np.arange(reg_max, dtype=np.float32)
+
+    box_dist = pred_boxs_64[0, gj, gi].reshape(4, reg_max)
+    box_prob = softmax(box_dist, axis=1)
+    ltrb = box_prob @ project
+    l, t, r, b = ltrb
+
+    cell_cx = gi + 0.5
+    cell_cy = gj + 0.5
+
+    x1 = (cell_cx - l) * stride
+    y1 = (cell_cy - t) * stride
+    x2 = (cell_cx + r) * stride
+    y2 = (cell_cy + b) * stride
+
+    # --------------------------------------------------
+    # 3. Keypoints 解码（box 内归一化）
+    # --------------------------------------------------
+    kpt_raw = pred_kpts[0, gj, gi].reshape(num_kpts, 3)
+
+    bw = max(x2 - x1, 1.0)
+    bh = max(y2 - y1, 1.0)
+
+    kpts = []
+    for i in range(num_kpts):
+        px = sigmoid(kpt_raw[i, 0])
+        py = sigmoid(kpt_raw[i, 1])
+        v  = sigmoid(kpt_raw[i, 2])
+
+        kx = x1 + px * bw
+        ky = y1 + py * bh
+
+        kpts.append([kx, ky, v])
+
+    # --------------------------------------------------
+    # 4. 反算 Letterbox（完全复用你原来的）
     # --------------------------------------------------
     if orig_w is not None and orig_h is not None:
         x1, y1 = unletterbox(
