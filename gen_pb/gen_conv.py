@@ -111,16 +111,48 @@ def gen_tf_element():
 
     return input_x, out_cls, out_box, out_kpts
 
+def pt_2_onnx_doubao(pt_file, onnx_file):
+    # 1. 设备配置，兼容CPU/GPU
+    device = "cuda" if torch.cuda.is_available() else "cpu"
+    # 2. 加载模型并移动到指定设备
+    model = QMYoloV8().to(device)
+    # 加载权重（weights_only=True是PyTorch 2.0+推荐写法，避免安全警告）
+    model.load_state_dict(torch.load(pt_file, map_location=device))
+
+    # 🌟 核心1：全局切换模型为推理模式（替代单独设置BN层，一次性生效所有层）
+    model.eval()
+
+    # 3. 构造示例输入（和模型实际输入一致：1,3,640,640），并移动到指定设备
+    example_input = torch.randn(1, 3, 640, 640).to(device)
+
+    # 🌟 核心2：关闭梯度计算，消除冗余计算图
+    with torch.no_grad():
+        # 导出ONNX（修正所有关键参数）
+        torch.onnx.export(
+            model=model,
+            args=(example_input,),
+            f=onnx_file,
+            input_names=["input_images"],
+            output_names=["output_cls", "output_box", "output_kpts"],
+            do_constant_folding=False,  # 开启常量折叠，合并大常量到主文件
+            opset_version=12,  # 兼容YOLOv8的opset版本，无需修改
+            verbose=True,
+            training=torch.onnx.TrainingMode.EVAL  # 强制导出推理模式ONNX
+        )
+
+    # 🌟 可选优化：检查ONNX模型有效性（避免导出损坏模型）
+    onnx_model = onnx.load(onnx_file)
+    onnx.checker.check_model(onnx_model)
+    print(f"✅ ONNX模型校验通过，无语法错误")
+
+    print(f"✅ 已成功将PT模型转为单文件ONNX：{onnx_file}")
+
 def pt_2_onnx(pt_file, onnx_file):
     device = "cuda" if torch.cuda.is_available() else "cpu"
     model = QMYoloV8().to(device)
     #model.load_state_dict(torch.load(pt_file, device, weights_only=True))
     model.load_state_dict(torch.load(pt_file, device))
-
-    for module in model.modules():
-        if isinstance(module, torch.nn.BatchNorm2d):
-            module.eval()
-            print("BatchNorm2d")
+    model.eval()
 
     example_input = torch.randn(1, 3, 640, 640).to(device)
     torch.onnx.export(model, example_input, onnx_file,

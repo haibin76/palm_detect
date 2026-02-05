@@ -1,6 +1,7 @@
 import torch
 import torch.nn as nn
-from models.qm_conv import QMConv
+from models.qm_conv import QMConv1x1_S1
+from models.qm_conv import QMConv3x3_S1
 
 class QMSPPF(nn.Module):
     """Spatial Pyramid Pooling - Fast (SPPF) layer for YOLOv5 by Glenn Jocher."""
@@ -18,25 +19,25 @@ class QMSPPF(nn.Module):
         """
         super().__init__()
         c_ = c1 // 2  # hidden channels
-        self.cv1 = QMConv(c1, c_, 1, 1, 0)
-        self.cv2 = QMConv(c_ * 4, c2, 1, 1, 0)
+        self.cv1 = QMConv1x1_S1(c1, c_)
+        self.cv2 = QMConv1x1_S1(c_ * 4, c2)
         #self.m = nn.MaxPool2d(kernel_size=k, stride=1, padding=k // 2)
         #self.conv1 = nn.Conv2d(c_, c_, 3, 1, 1, bias=False)
-        self.cv11 = QMConv(c_, c_, 3, 1, 1)
+        self.cv11 = QMConv3x3_S1(c_, c_)
         #self.conv2 = nn.Conv2d(c_, c_, 3, 1, 1, bias=False)
-        self.cv12 = QMConv(c_, c_, 3, 1, 1)
+        self.cv12 = QMConv3x3_S1(c_, c_)
         #self.conv21 = nn.Conv2d(c_, c_, 3, 1, 1, bias=False)
-        self.cv13 = QMConv(c_, c_, 3, 1, 1)
+        self.cv13 = QMConv3x3_S1(c_, c_)
 
         #self.conv3 = nn.Conv2d(c_, c_, 3, 1, 1, bias=False)
-        self.cv21 = QMConv(c_, c_, 3, 1, 1)
+        self.cv21 = QMConv3x3_S1(c_, c_)
         #self.conv31 = nn.Conv2d(c_, c_, 3, 1, 1, bias=False)
-        self.cv22 = QMConv(c_, c_, 3, 1, 1)
+        self.cv22 = QMConv3x3_S1(c_, c_)
 
         #self.conv4 = nn.Conv2d(c_, c_, 3, 1, 1, bias=False)
-        self.cv31 = QMConv(c_, c_, 3, 1, 1)
+        self.cv31 = QMConv3x3_S1(c_, c_)
         #self.conv41 = nn.Conv2d(c_, c_, 3, 1, 1, bias=False)
-        self.cv32 = QMConv(c_, c_, 3, 1, 1)
+        self.cv32 = QMConv3x3_S1(c_, c_)
 
         #self.pool1 = nn.MaxPool2d(2, stride=1, padding=1)
         #self.pool2 = nn.MaxPool2d(2, stride=1, padding=1)

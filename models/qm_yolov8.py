@@ -2,7 +2,8 @@ import torch
 import torch.nn as nn
 import torch.nn.functional as F
 
-from models.qm_conv import QMConv
+from models.qm_conv import QMConv3x3_S2
+from models.qm_conv import QMConv3x3_S1
 from models.qm_sppf import QMSPPF
 from models.qm_pose import QMPose
 from gen_pb.backbone_ztv2 import *
@@ -12,37 +13,37 @@ class QMYoloV8(nn.Module):
         super().__init__()
 
         #- [-1, 1, Conv, [64, 3, 2]]  # 0-P1/2
-        self.qmcm0 = QMConv(3, 16, 3, 2, 1, 1, 1)
+        self.qmcm0 = QMConv3x3_S2(3, 16)
 
         #- [-1, 1, Conv, [128, 3, 2]]  # 1-P2/4
-        self.qmcm1 = QMConv(16, 32, 3, 2, 1, 1, 1)
+        self.qmcm1 = QMConv3x3_S2(16, 32)
 
         #- [-1, 1, Conv, [128, 3, 1]]  # 1-P2/4 #  - [-1, 3, C2f, [128, True]]
-        self.qmcm2 = QMConv(32, 32, 3, 1, 1, 1, 1)
+        self.qmcm2 = QMConv3x3_S1(32, 32)
 
         #- [-1, 1, Conv, [256, 3, 2]]  # 3-P3/8
-        self.qmcm3 = QMConv(32, 64, 3, 2, 1, 1, 1)
+        self.qmcm3 = QMConv3x3_S2(32, 64)
 
         #- [-1, 1, Conv, [256, 3, 1]]  # [-1, 6, C2f, [256, True]]
-        self.qmcm4 = QMConv(64, 64, 3, 1, 1, 1, 1)
+        self.qmcm4 = QMConv3x3_S1(64, 64)
 
         #- [-1, 1, Conv, [512, 3, 1]]
-        self.qmcm5 = QMConv(64, 128, 3, 1, 1, 1, 1)
+        self.qmcm5 = QMConv3x3_S1(64, 128)
 
         #- [-1, 1, Conv, [512, 3, 2]]  # 5-P4/16
-        self.qmcm6 = QMConv(128, 128, 3, 2, 1, 1, 1)
+        self.qmcm6 = QMConv3x3_S2(128, 128)
 
         #- [-1, 1, Conv, [512, 3, 1]]  # [-1, 6, C2f, [256, True]]↵
-        self.qmcm7 = QMConv(128, 128, 3, 1, 1, 1, 1)
+        self.qmcm7 = QMConv3x3_S1(128, 128)
 
         #- [-1, 1, Conv, [512, 3, 1]]
-        self.qmcm8 = QMConv(128, 128, 3, 1, 1, 1, 1)
+        self.qmcm8 = QMConv3x3_S1(128, 128)
 
         #- [-1, 1, Conv, [512, 3, 2]]  # 7-P5/32
-        self.qmcm9 = QMConv(128, 128, 3, 2, 1, 1, 1)
+        self.qmcm9 = QMConv3x3_S2(128, 128)
 
         #- [-1, 1, Conv, [512, 3, 1]]  # - [-1, 3, C2f, [512, True]]
-        self.qmcm10 = QMConv(128, 128, 3, 1, 1, 1, 1)
+        self.qmcm10 = QMConv3x3_S1(128, 128)
 
         #- [-1, 1, SPPF, [512, 2]]  # 9
         self.qmsppf = QMSPPF(128, 128)

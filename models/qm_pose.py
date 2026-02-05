@@ -2,7 +2,7 @@ import torch
 import torch.nn as nn
 import torch.nn.functional as F
 
-from models.qm_conv import QMConv
+from models.qm_conv import QMConv3x3_S1
 from models.qm_sppf import QMSPPF
 
 class QMDetect(nn.Module):
@@ -26,8 +26,8 @@ class QMDetect(nn.Module):
         self.no = nc + self.reg_max * 4  # number of outputs per anchor
         self.stride = torch.zeros(self.nl)  # strides computed during build
         c2, c3 = max((16, ch[0] // 4, self.reg_max * 4)), max(ch[0], min(self.nc, 100))  # channels
-        self.cv2 = nn.Sequential(QMConv(ch[0], c2, 3, 1, 1), QMConv(c2, c2, 3, 1, 1), nn.Conv2d(c2, 4 * self.reg_max, 1))
-        self.cv3 = nn.Sequential(QMConv(ch[0], c3, 3, 1, 1), QMConv(c3, c3, 3, 1, 1), nn.Conv2d(c3, self.nc, 1))
+        self.cv2 = nn.Sequential(QMConv3x3_S1(ch[0], c2), QMConv3x3_S1(c2, c2), nn.Conv2d(c2, 4 * self.reg_max, 1))
+        self.cv3 = nn.Sequential(QMConv3x3_S1(ch[0], c3), QMConv3x3_S1(c3, c3), nn.Conv2d(c3, self.nc, 1))
 
     def forward(self, x):
         boxs = self.cv2(x)
@@ -44,7 +44,7 @@ class QMPose(QMDetect):
 
         c4 = max(ch[0] // 4, self.nk)
         #self.cv4 = nn.ModuleList(nn.Sequential(QMConv(x, c4, 3), QMConv(c4, c4, 3), nn.Conv2d(c4, self.nk, 1)) for x in ch)
-        self.cv4 = nn.Sequential(QMConv(ch[0], c4, 3, 1, 1), QMConv(c4, c4, 3, 1, 1), nn.Conv2d(c4, self.nk, 1))
+        self.cv4 = nn.Sequential(QMConv3x3_S1(ch[0], c4), QMConv3x3_S1(c4, c4), nn.Conv2d(c4, self.nk, 1))
 
     def forward(self, x):
         """Perform forward pass through YOLO model and return predictions."""
