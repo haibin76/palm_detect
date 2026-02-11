@@ -94,15 +94,17 @@ def train_one_epoch(model, dataloader, optimizer, device):
         optimizer.step()
 
         total_loss += loss.item()
+        # 1. 先计算平均 loss
+        current_avg_loss = total_loss / (step + 1)
 
-        # 更新进度条，显示两个 loss 方便观察哪个不收敛
-        pbar.set_postfix(
-            total=f"{loss.item():.3f}",
-            cls=f"{loss_cls.item():.3f}",
-            kpt=f"{loss_kpt.item():.3f}",
-            box=f"{loss_box.item():.3f}",
-            step=f"{step}"
-        )
+        # 2. 更新进度条
+        pbar.set_postfix({
+            'avg': f"{current_avg_loss:.3f}",   # 整体平均 Loss
+            'cls': f"{loss_cls.item():.3f}",    # 分类瞬时 Loss
+            'box': f"{loss_box.item():.3f}",    # 框瞬时 Loss
+            'kpt': f"{loss_kpt.item():.3f}",    # 关键点瞬时 Loss
+            'cur': f"{loss.item():.3f}"         # 当前总 Loss (注意这里用 loss 而不是 total_loss)
+        })
 
     return total_loss / len(dataloader)
 
@@ -153,12 +155,17 @@ def val_one_epoch(model, dataloader, device):
 
             total_loss += loss.item()
 
-            pbar.set_postfix(
-                total=f"{loss.item():.3f}",
-                cls=f"{loss_cls.item():.3f}",
-                box=f"{loss_boxs.item():.3f}",
-                pkts=f"{loss_kpts.item():.3f}"
-            )
+            # 1. 先计算平均 loss
+            current_avg_loss = total_loss / (step + 1)
+
+            # 2. 更新进度条
+            pbar.set_postfix({
+                'avg': f"{current_avg_loss:.3f}",   # 整体平均 Loss
+                'cls': f"{loss_cls.item():.3f}",    # 分类瞬时 Loss
+                'box': f"{loss_boxs.item():.3f}",    # 框瞬时 Loss
+                'kpt': f"{loss_kpts.item():.3f}",    # 关键点瞬时 Loss
+                'cur': f"{loss.item():.3f}"         # 当前总 Loss (注意这里用 loss 而不是 total_loss)
+            })
 
     # 3. 计算最终指标 (防止除零)
     safe_div = lambda n, d: n / (d + 1e-6)
@@ -188,13 +195,13 @@ def main():
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
     print("\nthis device:", device)
     start_epoch = 0
-    end_epochs = 50
+    end_epochs = 100
     batch_size = 64
 
-    train_dataset = HandKeypointsDataset(root="data/hand-keypoints", split="train", img_size=640)
+    train_dataset = HandKeypointsDataset(root="/home/test/whb/palm/ultralytics-yolo8ns/datasets/hand-keypoints", split="train", img_size=640)
     train_loader = DataLoader(train_dataset, batch_size=batch_size, shuffle=True )
 
-    val_dataset = HandKeypointsDataset(root="data/hand-keypoints", split="val", img_size=640)
+    val_dataset = HandKeypointsDataset(root="/home/test/whb/palm/ultralytics-yolo8ns/datasets/hand-keypoints", split="val", img_size=640)
     val_loader = DataLoader(val_dataset, batch_size=batch_size, shuffle=False)
 
     #batch = next(iter(train_loader))
@@ -203,7 +210,7 @@ def main():
 
     checkpoint_path = "weights/last.pt"  # 你的权重文件路径
     model = QMYoloV8().to(device)
-    optimizer = torch.optim.AdamW( model.parameters(), lr=1e-3, weight_decay=1e-4)
+    optimizer = torch.optim.AdamW( model.parameters(), lr=1e-4, weight_decay=5e-4)
     best_val_loss = float("inf")
 
     # 2. 加载权重
@@ -251,7 +258,6 @@ def main():
             torch.save(model.state_dict(), "weights/best.pt")
             print(">> saved best model")
 
-        if start_epoch < end_epochs:
             # 保存当前的进度
             save_dict = {
                 'epoch': epoch,

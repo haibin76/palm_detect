@@ -5,20 +5,82 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="e9c39fa5-ccca-47c5-bdef-483ea0aa691b" name="更改" comment="">
+      <change afterPath="$PROJECT_DIR$/dataset/augment.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/weights/best.pt" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/weights/last.pt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/modules.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/modules.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/palm_detect.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/palm_detect.iml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/vcs.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/vcs.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/hand-keypoints/labels/train/11cdaf1b-2a1d-4365-b284-e3f645f83307.txt" beforeDir="false" afterPath="$PROJECT_DIR$/data/hand-keypoints/labels/train/11cdaf1b-2a1d-4365-b284-e3f645f83307.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/hand-keypoints/labels/train/32478953-5632-49f2-a15a-ebeec6bb451d.txt" beforeDir="false" afterPath="$PROJECT_DIR$/data/hand-keypoints/labels/train/32478953-5632-49f2-a15a-ebeec6bb451d.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/hand-keypoints/labels/train/3edcf980-45b0-4449-83cf-8bbb7eda42bf.txt" beforeDir="false" afterPath="$PROJECT_DIR$/data/hand-keypoints/labels/train/3edcf980-45b0-4449-83cf-8bbb7eda42bf.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/hand-keypoints/labels/train/3f8774e1-5500-4fd8-970e-31c67704e942.txt" beforeDir="false" afterPath="$PROJECT_DIR$/data/hand-keypoints/labels/train/3f8774e1-5500-4fd8-970e-31c67704e942.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/hand-keypoints/labels/train/6310a9b6-a2df-4940-9e3d-1fc5e3cce8e7.txt" beforeDir="false" afterPath="$PROJECT_DIR$/data/hand-keypoints/labels/train/6310a9b6-a2df-4940-9e3d-1fc5e3cce8e7.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/hand-keypoints/labels/train/6d4c59b4-f8e3-4f27-a184-3f8a1e610c2f.txt" beforeDir="false" afterPath="$PROJECT_DIR$/data/hand-keypoints/labels/train/6d4c59b4-f8e3-4f27-a184-3f8a1e610c2f.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/hand-keypoints/labels/train/6eada909-06da-439b-976a-c6c4b83c9422.txt" beforeDir="false" afterPath="$PROJECT_DIR$/data/hand-keypoints/labels/train/6eada909-06da-439b-976a-c6c4b83c9422.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/hand-keypoints/labels/train/73be2b28-3026-4e6f-8a85-217ea5b09873.txt" beforeDir="false" afterPath="$PROJECT_DIR$/data/hand-keypoints/labels/train/73be2b28-3026-4e6f-8a85-217ea5b09873.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/hand-keypoints/labels/train/a8e83655-f544-458e-9882-05f65ffea1e2.txt" beforeDir="false" afterPath="$PROJECT_DIR$/data/hand-keypoints/labels/train/a8e83655-f544-458e-9882-05f65ffea1e2.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/hand-keypoints/labels/train/b1a9c0b5-1fc9-4447-b1ba-3bcd2f4032d9.txt" beforeDir="false" afterPath="$PROJECT_DIR$/data/hand-keypoints/labels/train/b1a9c0b5-1fc9-4447-b1ba-3bcd2f4032d9.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/hand-keypoints/labels/train/b1b8caa9-e5c1-41c0-aeef-5e20e82d16d9.txt" beforeDir="false" afterPath="$PROJECT_DIR$/data/hand-keypoints/labels/train/b1b8caa9-e5c1-41c0-aeef-5e20e82d16d9.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/hand-keypoints/labels/train/c214e6b0-e9a5-4a51-a900-274abcf7f57d.txt" beforeDir="false" afterPath="$PROJECT_DIR$/data/hand-keypoints/labels/train/c214e6b0-e9a5-4a51-a900-274abcf7f57d.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/hand-keypoints/labels/train/caf6063d-d88f-4752-951e-18bf183d56b7.txt" beforeDir="false" afterPath="$PROJECT_DIR$/data/hand-keypoints/labels/train/caf6063d-d88f-4752-951e-18bf183d56b7.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/hand-keypoints/labels/train/cdce7b27-56a1-4fbd-a7f8-a0943f243c16.txt" beforeDir="false" afterPath="$PROJECT_DIR$/data/hand-keypoints/labels/train/cdce7b27-56a1-4fbd-a7f8-a0943f243c16.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/hand-keypoints/labels/train/cf29afbf-d9c3-456e-888e-46d3a1764819.txt" beforeDir="false" afterPath="$PROJECT_DIR$/data/hand-keypoints/labels/train/cf29afbf-d9c3-456e-888e-46d3a1764819.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/hand-keypoints/labels/train/e409d006-f7c9-4a92-bf30-6b38504443ff.txt" beforeDir="false" afterPath="$PROJECT_DIR$/data/hand-keypoints/labels/train/e409d006-f7c9-4a92-bf30-6b38504443ff.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/hand-keypoints/labels/train/ea244f05-3fc7-4323-9763-f4aedea13a8f.txt" beforeDir="false" afterPath="$PROJECT_DIR$/data/hand-keypoints/labels/train/ea244f05-3fc7-4323-9763-f4aedea13a8f.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/hand-keypoints/labels/train/f4f2eb87-2fa9-487e-8a5a-539832ba5624.txt" beforeDir="false" afterPath="$PROJECT_DIR$/data/hand-keypoints/labels/train/f4f2eb87-2fa9-487e-8a5a-539832ba5624.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/hand-keypoints/labels/train/f5d2973d-03c4-4b66-89eb-f1e63766edce.txt" beforeDir="false" afterPath="$PROJECT_DIR$/data/hand-keypoints/labels/train/f5d2973d-03c4-4b66-89eb-f1e63766edce.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/hand-keypoints/labels/train/fd50d72b-a5f6-4c25-a99a-89604fac86e7.txt" beforeDir="false" afterPath="$PROJECT_DIR$/data/hand-keypoints/labels/train/fd50d72b-a5f6-4c25-a99a-89604fac86e7.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/hand-keypoints/labels/val/81750923-7c33-41ec-9fda-73f30a531bc0.txt" beforeDir="false" afterPath="$PROJECT_DIR$/data/hand-keypoints/labels/val/81750923-7c33-41ec-9fda-73f30a531bc0.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/hand-keypoints/labels/val/83cbbe91-5cf5-4637-bacb-c12670930363.txt" beforeDir="false" afterPath="$PROJECT_DIR$/data/hand-keypoints/labels/val/83cbbe91-5cf5-4637-bacb-c12670930363.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/hand-keypoints/labels/val/b78e4522-a7e4-44c2-a40a-61b44729093f.txt" beforeDir="false" afterPath="$PROJECT_DIR$/data/hand-keypoints/labels/val/b78e4522-a7e4-44c2-a40a-61b44729093f.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/hand-keypoints/labels/val/d22db4d5-38d1-4e82-acf0-35d83cf5109c.txt" beforeDir="false" afterPath="$PROJECT_DIR$/data/hand-keypoints/labels/val/d22db4d5-38d1-4e82-acf0-35d83cf5109c.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/hand-keypoints/labels/val/f5a90bde-bb36-4fea-81c3-2426d53d0ecc.txt" beforeDir="false" afterPath="$PROJECT_DIR$/data/hand-keypoints/labels/val/f5a90bde-bb36-4fea-81c3-2426d53d0ecc.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/hand-keypoints/labels_21_kpt_all/train/11cdaf1b-2a1d-4365-b284-e3f645f83307.txt" beforeDir="false" afterPath="$PROJECT_DIR$/data/hand-keypoints/labels_21_kpt_all/train/11cdaf1b-2a1d-4365-b284-e3f645f83307.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/hand-keypoints/labels_21_kpt_all/train/32478953-5632-49f2-a15a-ebeec6bb451d.txt" beforeDir="false" afterPath="$PROJECT_DIR$/data/hand-keypoints/labels_21_kpt_all/train/32478953-5632-49f2-a15a-ebeec6bb451d.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/hand-keypoints/labels_21_kpt_all/train/3edcf980-45b0-4449-83cf-8bbb7eda42bf.txt" beforeDir="false" afterPath="$PROJECT_DIR$/data/hand-keypoints/labels_21_kpt_all/train/3edcf980-45b0-4449-83cf-8bbb7eda42bf.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/hand-keypoints/labels_21_kpt_all/train/3f8774e1-5500-4fd8-970e-31c67704e942.txt" beforeDir="false" afterPath="$PROJECT_DIR$/data/hand-keypoints/labels_21_kpt_all/train/3f8774e1-5500-4fd8-970e-31c67704e942.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/hand-keypoints/labels_21_kpt_all/train/6310a9b6-a2df-4940-9e3d-1fc5e3cce8e7.txt" beforeDir="false" afterPath="$PROJECT_DIR$/data/hand-keypoints/labels_21_kpt_all/train/6310a9b6-a2df-4940-9e3d-1fc5e3cce8e7.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/hand-keypoints/labels_21_kpt_all/train/6d4c59b4-f8e3-4f27-a184-3f8a1e610c2f.txt" beforeDir="false" afterPath="$PROJECT_DIR$/data/hand-keypoints/labels_21_kpt_all/train/6d4c59b4-f8e3-4f27-a184-3f8a1e610c2f.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/hand-keypoints/labels_21_kpt_all/train/6eada909-06da-439b-976a-c6c4b83c9422.txt" beforeDir="false" afterPath="$PROJECT_DIR$/data/hand-keypoints/labels_21_kpt_all/train/6eada909-06da-439b-976a-c6c4b83c9422.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/hand-keypoints/labels_21_kpt_all/train/73be2b28-3026-4e6f-8a85-217ea5b09873.txt" beforeDir="false" afterPath="$PROJECT_DIR$/data/hand-keypoints/labels_21_kpt_all/train/73be2b28-3026-4e6f-8a85-217ea5b09873.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/hand-keypoints/labels_21_kpt_all/train/a8e83655-f544-458e-9882-05f65ffea1e2.txt" beforeDir="false" afterPath="$PROJECT_DIR$/data/hand-keypoints/labels_21_kpt_all/train/a8e83655-f544-458e-9882-05f65ffea1e2.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/hand-keypoints/labels_21_kpt_all/train/b1a9c0b5-1fc9-4447-b1ba-3bcd2f4032d9.txt" beforeDir="false" afterPath="$PROJECT_DIR$/data/hand-keypoints/labels_21_kpt_all/train/b1a9c0b5-1fc9-4447-b1ba-3bcd2f4032d9.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/hand-keypoints/labels_21_kpt_all/train/b1b8caa9-e5c1-41c0-aeef-5e20e82d16d9.txt" beforeDir="false" afterPath="$PROJECT_DIR$/data/hand-keypoints/labels_21_kpt_all/train/b1b8caa9-e5c1-41c0-aeef-5e20e82d16d9.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/hand-keypoints/labels_21_kpt_all/train/c214e6b0-e9a5-4a51-a900-274abcf7f57d.txt" beforeDir="false" afterPath="$PROJECT_DIR$/data/hand-keypoints/labels_21_kpt_all/train/c214e6b0-e9a5-4a51-a900-274abcf7f57d.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/hand-keypoints/labels_21_kpt_all/train/caf6063d-d88f-4752-951e-18bf183d56b7.txt" beforeDir="false" afterPath="$PROJECT_DIR$/data/hand-keypoints/labels_21_kpt_all/train/caf6063d-d88f-4752-951e-18bf183d56b7.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/hand-keypoints/labels_21_kpt_all/train/cdce7b27-56a1-4fbd-a7f8-a0943f243c16.txt" beforeDir="false" afterPath="$PROJECT_DIR$/data/hand-keypoints/labels_21_kpt_all/train/cdce7b27-56a1-4fbd-a7f8-a0943f243c16.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/hand-keypoints/labels_21_kpt_all/train/cf29afbf-d9c3-456e-888e-46d3a1764819.txt" beforeDir="false" afterPath="$PROJECT_DIR$/data/hand-keypoints/labels_21_kpt_all/train/cf29afbf-d9c3-456e-888e-46d3a1764819.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/hand-keypoints/labels_21_kpt_all/train/e409d006-f7c9-4a92-bf30-6b38504443ff.txt" beforeDir="false" afterPath="$PROJECT_DIR$/data/hand-keypoints/labels_21_kpt_all/train/e409d006-f7c9-4a92-bf30-6b38504443ff.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/hand-keypoints/labels_21_kpt_all/train/ea244f05-3fc7-4323-9763-f4aedea13a8f.txt" beforeDir="false" afterPath="$PROJECT_DIR$/data/hand-keypoints/labels_21_kpt_all/train/ea244f05-3fc7-4323-9763-f4aedea13a8f.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/hand-keypoints/labels_21_kpt_all/train/f4f2eb87-2fa9-487e-8a5a-539832ba5624.txt" beforeDir="false" afterPath="$PROJECT_DIR$/data/hand-keypoints/labels_21_kpt_all/train/f4f2eb87-2fa9-487e-8a5a-539832ba5624.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/hand-keypoints/labels_21_kpt_all/train/f5d2973d-03c4-4b66-89eb-f1e63766edce.txt" beforeDir="false" afterPath="$PROJECT_DIR$/data/hand-keypoints/labels_21_kpt_all/train/f5d2973d-03c4-4b66-89eb-f1e63766edce.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/hand-keypoints/labels_21_kpt_all/train/fd50d72b-a5f6-4c25-a99a-89604fac86e7.txt" beforeDir="false" afterPath="$PROJECT_DIR$/data/hand-keypoints/labels_21_kpt_all/train/fd50d72b-a5f6-4c25-a99a-89604fac86e7.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/hand-keypoints/labels_21_kpt_all/val/81750923-7c33-41ec-9fda-73f30a531bc0.txt" beforeDir="false" afterPath="$PROJECT_DIR$/data/hand-keypoints/labels_21_kpt_all/val/81750923-7c33-41ec-9fda-73f30a531bc0.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/hand-keypoints/labels_21_kpt_all/val/83cbbe91-5cf5-4637-bacb-c12670930363.txt" beforeDir="false" afterPath="$PROJECT_DIR$/data/hand-keypoints/labels_21_kpt_all/val/83cbbe91-5cf5-4637-bacb-c12670930363.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/hand-keypoints/labels_21_kpt_all/val/b78e4522-a7e4-44c2-a40a-61b44729093f.txt" beforeDir="false" afterPath="$PROJECT_DIR$/data/hand-keypoints/labels_21_kpt_all/val/b78e4522-a7e4-44c2-a40a-61b44729093f.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/hand-keypoints/labels_21_kpt_all/val/d22db4d5-38d1-4e82-acf0-35d83cf5109c.txt" beforeDir="false" afterPath="$PROJECT_DIR$/data/hand-keypoints/labels_21_kpt_all/val/d22db4d5-38d1-4e82-acf0-35d83cf5109c.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/hand-keypoints/labels_21_kpt_all/val/f5a90bde-bb36-4fea-81c3-2426d53d0ecc.txt" beforeDir="false" afterPath="$PROJECT_DIR$/data/hand-keypoints/labels_21_kpt_all/val/f5a90bde-bb36-4fea-81c3-2426d53d0ecc.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/dataset/data.py" beforeDir="false" afterPath="$PROJECT_DIR$/dataset/data.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/gen_pb.py" beforeDir="false" afterPath="$PROJECT_DIR$/gen_pb.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/gen_pb/gen_conv.py" beforeDir="false" afterPath="$PROJECT_DIR$/gen_pb/gen_conv.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/gen_pb/onnx2pb.py" beforeDir="false" afterPath="$PROJECT_DIR$/gen_pb/onnx2pb.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/loss/boxs_loss.py" beforeDir="false" afterPath="$PROJECT_DIR$/loss/boxs_loss.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/loss/cls_loss.py" beforeDir="false" afterPath="$PROJECT_DIR$/loss/cls_loss.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/loss/keypoints_loss.py" beforeDir="false" afterPath="$PROJECT_DIR$/loss/keypoints_loss.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/models/qm_conv.py" beforeDir="false" afterPath="$PROJECT_DIR$/models/qm_conv.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/models/qm_pose.py" beforeDir="false" afterPath="$PROJECT_DIR$/models/qm_pose.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/models/qm_sppf.py" beforeDir="false" afterPath="$PROJECT_DIR$/models/qm_sppf.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/models/qm_yolov8.py" beforeDir="false" afterPath="$PROJECT_DIR$/models/qm_yolov8.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/pt2pb.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/postprocess/boxs_decode.py" beforeDir="false" afterPath="$PROJECT_DIR$/postprocess/boxs_decode.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/postprocess/decode.py" beforeDir="false" afterPath="$PROJECT_DIR$/postprocess/decode.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/postprocess/keypoints_decode.py" beforeDir="false" afterPath="$PROJECT_DIR$/postprocess/keypoints_decode.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/test.py" beforeDir="false" afterPath="$PROJECT_DIR$/test.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/test_onnx.py" beforeDir="false" afterPath="$PROJECT_DIR$/test_onnx.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/test_pb.py" beforeDir="false" afterPath="$PROJECT_DIR$/test_pb.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/weights/best.onnx" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/weights/best.pb" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/weights/best.pt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/weights/last.pt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/train.py" beforeDir="false" afterPath="$PROJECT_DIR$/train.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -47,7 +109,7 @@
   "keyToString": {
     "ModuleVcsDetector.initialDetectionPerformed": "true",
     "Python.freeze_pb.executor": "Debug",
-    "Python.gen_pb.executor": "Debug",
+    "Python.gen_pb.executor": "Run",
     "Python.test.executor": "Debug",
     "Python.test_onnx.executor": "Debug",
     "Python.test_pb.executor": "Debug",
@@ -56,18 +118,19 @@
     "RunOnceActivity.git.unshallow": "true",
     "SHARE_PROJECT_CONFIGURATION_FILES": "true",
     "git-widget-placeholder": "main",
-    "last_opened_file_path": "D:/work/palm_model/palm_detect"
+    "last_opened_file_path": "D:/work/palm_model/palm_detect/dataset"
   }
 }]]></component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
+      <recent name="D:\work\palm_model\palm_detect\dataset" />
       <recent name="D:\work\palm_model\palm_detect" />
     </key>
     <key name="MoveFile.RECENT_KEYS">
       <recent name="D:\work\palm_model\palm_detect\weights" />
     </key>
   </component>
-  <component name="RunManager" selected="Python.test">
+  <component name="RunManager" selected="Python.gen_pb">
     <configuration name="gen_pb" type="PythonConfigurationType" factoryName="Python" nameIsGenerated="true">
       <module name="palm_detect" />
       <option name="ENV_FILES" value="" />
@@ -222,11 +285,6 @@
           <url>file://$PROJECT_DIR$/test_pb.py</url>
           <line>346</line>
           <option name="timeStamp" value="106" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/test.py</url>
-          <line>44</line>
-          <option name="timeStamp" value="107" />
         </line-breakpoint>
       </breakpoints>
     </breakpoint-manager>
